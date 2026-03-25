@@ -28,7 +28,7 @@ public class Candidate {
     private String phone;
     private String linkedinUrl;
     private String portfolioUrl;
-    private String cvPath;
+
     private Integer yearsOfExperience;
     private String currentCompany;
     private String currentPosition;

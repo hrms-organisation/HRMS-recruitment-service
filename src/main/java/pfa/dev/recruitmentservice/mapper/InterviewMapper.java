@@ -53,6 +53,7 @@ public interface InterviewMapper {
     // status reste inchangé (important)
     @Mapping(target = "status",
             ignore = true)
+    @Mapping( target =  "feedback" , ignore = true )
 
     void updateEntity(
 

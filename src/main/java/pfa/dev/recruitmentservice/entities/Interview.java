@@ -23,12 +23,11 @@ public class Interview {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    private Long interviewerId; // Employee ID from Employee Service
+    private Long interviewerId;
     private LocalDateTime interviewDate;
-    private String type; // HR, TECHNICAL, MANAGERIAL
-    private String status; // PLANNED, DONE, CANCELED
+    private String type;
+    private String status;
     private String feedback;
     private Integer rating;
 
-    // getters and setters
 }

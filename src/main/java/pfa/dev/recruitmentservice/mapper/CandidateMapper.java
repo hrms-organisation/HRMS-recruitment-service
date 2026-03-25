@@ -11,52 +11,36 @@ import pfa.dev.recruitmentservice.entities.Candidate;
 )
 public interface CandidateMapper {
 
+    // ========= ENTITY -> RESPONSE =========
 
     @Mappings({
-
             @Mapping(source = "id", target = "id"),
-
             @Mapping(source = "firstName", target = "firstName"),
-
             @Mapping(source = "lastName", target = "lastName"),
-
             @Mapping(source = "email", target = "email"),
-
             @Mapping(source = "phone", target = "phone"),
-
             @Mapping(source = "linkedinUrl", target = "linkedinUrl"),
-
             @Mapping(source = "portfolioUrl", target = "portfolioUrl"),
+            @Mapping(source = "yearsOfExperience", target = "yearsOfExperience"),
+            @Mapping(source = "currentCompany", target = "currentCompany"),
+            @Mapping(source = "currentPosition", target = "currentPosition"),
 
-            @Mapping(source = "cvPath", target = "cvPath"),
-
-            @Mapping(source = "yearsOfExperience",
-                    target = "yearsOfExperience"),
-
-            @Mapping(source = "currentCompany",
-                    target = "currentCompany"),
-
-            @Mapping(source = "currentPosition",
-                    target = "currentPosition")
-
+            // attachments list
+            @Mapping(source = "attachments", target = "attachments")
     })
     CandidateResponseDTO toDTO(Candidate candidate);
 
 
-
-    // ========= REQUEST DTO -> ENTITY (CREATE) =========
+    // ========= REQUEST -> ENTITY =========
 
     @Mappings({
-
             @Mapping(target = "id", ignore = true),
 
+            // relations
             @Mapping(target = "applications", ignore = true),
-
             @Mapping(target = "attachments", ignore = true)
-
     })
     Candidate toEntity(CandidateRequestDTO dto);
-
 
 
     // ========= UPDATE ENTITY =========
@@ -66,17 +50,12 @@ public interface CandidateMapper {
                     NullValuePropertyMappingStrategy.IGNORE
     )
     @Mappings({
-
             @Mapping(target = "id", ignore = true),
-
             @Mapping(target = "applications", ignore = true),
-
             @Mapping(target = "attachments", ignore = true)
-
     })
     void updateCandidateFromDto(
             CandidateRequestDTO dto,
             @MappingTarget Candidate candidate
     );
-
 }

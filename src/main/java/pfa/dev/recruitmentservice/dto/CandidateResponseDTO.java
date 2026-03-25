@@ -2,6 +2,7 @@ package pfa.dev.recruitmentservice.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class CandidateResponseDTO {
@@ -13,8 +14,14 @@ public class CandidateResponseDTO {
     private String phone;
     private String linkedinUrl;
     private String portfolioUrl;
-    private String cvPath;
+
+
+
     private Integer yearsOfExperience;
     private String currentCompany;
     private String currentPosition;
+    private List<AttachmentResponseDTO> attachments;
+
+
+
 }

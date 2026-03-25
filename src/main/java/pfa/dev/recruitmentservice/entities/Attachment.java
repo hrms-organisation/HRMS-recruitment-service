@@ -22,8 +22,10 @@ public class Attachment {
     @JoinColumn(name = "candidate_id")
     private Candidate candidate;
 
+    @Lob
+    private byte[] fileData;
+
     private String fileName;
     private String fileType;
-    private String filePath;
-
+    private String category;
 }

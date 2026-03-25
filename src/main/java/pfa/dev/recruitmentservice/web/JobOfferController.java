@@ -19,7 +19,7 @@ public class JobOfferController {
     public ResponseEntity<JobOfferResponseDTO> addNewJob( @RequestBody JobOfferRequestDTO dto){
         return  ResponseEntity.ok(jobOfferService.createJobOffer(dto));
     }
-    @PostMapping("/get/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<JobOfferResponseDTO> getJobOfferById(@PathVariable Long id){
         return ResponseEntity.ok(jobOfferService.getJobOfferById(id));
     }

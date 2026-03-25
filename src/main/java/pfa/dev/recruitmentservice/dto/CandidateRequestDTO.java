@@ -1,5 +1,6 @@
 package pfa.dev.recruitmentservice.dto;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class CandidateRequestDTO {
@@ -13,5 +14,4 @@ public class CandidateRequestDTO {
     private Integer yearsOfExperience;
     private String currentCompany;
     private String currentPosition;
-    private String cvPath;
 }

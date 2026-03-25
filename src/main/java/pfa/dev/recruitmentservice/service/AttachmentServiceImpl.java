@@ -1,148 +1,110 @@
 package pfa.dev.recruitmentservice.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pfa.dev.recruitmentservice.dto.AttachmentRequestDTO;
 import pfa.dev.recruitmentservice.dto.AttachmentResponseDTO;
 import pfa.dev.recruitmentservice.entities.Attachment;
 import pfa.dev.recruitmentservice.entities.Candidate;
-import pfa.dev.recruitmentservice.exception.ResourceNotFoundException;
 import pfa.dev.recruitmentservice.mapper.AttachmentMapper;
 import pfa.dev.recruitmentservice.repositories.AttachmentRepopsitory;
 import pfa.dev.recruitmentservice.repositories.CandidateRepository;
 
-import java.util.List;
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
-@Slf4j
-@Transactional(readOnly = true)
 public class AttachmentServiceImpl implements AttachmentService {
 
-private final AttachmentRepopsitory attachmentRepository;
+    private final AttachmentRepopsitory attachmentRepository;
     private final CandidateRepository candidateRepository;
-
     private final AttachmentMapper attachmentMapper;
-
-
-
-    // ================= CREATE =================
+    private final ClamavScanService clamavScanService;
 
     @Override
-    @Transactional
-    public AttachmentResponseDTO
-    createAttachment(AttachmentRequestDTO dto) {
+    public AttachmentResponseDTO createAttachment(AttachmentRequestDTO dto) {
+        try {
+            Candidate candidate = candidateRepository.findById(dto.getCandidateId())
+                    .orElseThrow(() -> new RuntimeException("Candidate not found"));
 
-        log.info("Creating attachment for candidate {}",
-                dto.getCandidateId());
+            MultipartFile file = dto.getFile();
+            byte[] fileBytes = file.getBytes();
+            clamavScanService.scan(file.getOriginalFilename(), fileBytes);
+            Attachment attachment = attachmentMapper.toEntity(dto);
 
-        Candidate candidate =
-                findCandidate(dto.getCandidateId());
+            attachment.setCandidate(candidate);
+            attachment.setFileData(file.getBytes());
+            attachment.setFileName(file.getOriginalFilename());
+            attachment.setFileType(file.getContentType());
 
-        Attachment attachment =
-                attachmentMapper.toEntity(dto);
+            attachmentRepository.save(attachment);
 
-        attachment.setCandidate(candidate);
+            return attachmentMapper.toDTO(attachment);
 
-        Attachment saved =
-                attachmentRepository.save(attachment);
-
-        return attachmentMapper.toDTO(saved);
+        } catch (IOException e) {
+            throw new RuntimeException("Upload failed", e);
+        }
     }
 
-
-    // ================= UPDATE =================
-
     @Override
-    @Transactional
-    public AttachmentResponseDTO updateAttachment(
-            Long id,
-            AttachmentRequestDTO dto) {
+    public AttachmentResponseDTO updateAttachment(Long id, AttachmentRequestDTO dto) {
+        Attachment attachment = attachmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Attachment not found"));
 
-        Attachment attachment =
-                findAttachment(id);
+        attachmentMapper.updateEntity(dto, attachment);
 
-        attachmentMapper.updateEntity(
-                dto,
-                attachment
-        );
+        if (dto.getFile() != null && !dto.getFile().isEmpty()) {
+            try {
+                byte[] fileBytes = dto.getFile().getBytes();
 
-        Attachment updated =
-                attachmentRepository.save(attachment);
+                clamavScanService.scan(dto.getFile().getOriginalFilename(), fileBytes);
 
-        log.info("Attachment updated {}", id);
+                attachment.setFileData(dto.getFile().getBytes());
+                attachment.setFileName(dto.getFile().getOriginalFilename());
+                attachment.setFileType(dto.getFile().getContentType());
+            } catch (IOException e) {
+                throw new RuntimeException("File update failed", e);
+            }
+        }
 
-        return attachmentMapper.toDTO(updated);
-    }
-
-
-    // ================= DELETE =================
-
-    @Override
-    @Transactional
-    public void deleteAttachment(Long id) {
-
-        Attachment attachment =
-                findAttachment(id);
-
-        attachmentRepository.delete(attachment);
-
-        log.info("Attachment deleted {}", id);
-    }
-
-
-    // ================= GET BY ID =================
-
-    @Override
-    public AttachmentResponseDTO
-    getAttachmentById(Long id) {
-
-        Attachment attachment =
-                findAttachment(id);
+        attachmentRepository.save(attachment);
 
         return attachmentMapper.toDTO(attachment);
     }
 
-
-    // ================= GET BY CANDIDATE =================
+    @Override
+    public void deleteAttachment(Long id) {
+        Attachment attachment = attachmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Attachment not found"));
+        attachmentRepository.delete(attachment);
+    }
 
     @Override
-    public Page<AttachmentResponseDTO>
-    getAllAttachmentsByCandidate(
-            Long candidateId,
-            Pageable pageable) {
+    public AttachmentResponseDTO getAttachmentById(Long id) {
+        return attachmentRepository.findById(id)
+                .map(attachmentMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Attachment not found"));
+    }
 
-        Candidate candidate =
-                findCandidate(candidateId);
-
-        return attachmentRepository
-                .findByCandidate(candidate, pageable)
+    @Override
+    public Page<AttachmentResponseDTO> getAllAttachmentsByCandidate(Long candidateId, Pageable pageable) {
+        return attachmentRepository.findByCandidate_Id(candidateId, pageable)
                 .map(attachmentMapper::toDTO);
     }
 
-    // ================= PRIVATE =================
 
-    private Attachment findAttachment(Long id) {
 
-        return attachmentRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Attachment not found id : " + id
-                        ));
+
+    @Override
+    public Resource downloadFile(Long id) {
+        Attachment attachment = attachmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Attachment not found"));
+
+        return new ByteArrayResource(attachment.getFileData());
     }
-
-    private Candidate findCandidate(Long id) {
-
-        return candidateRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Candidate not found id : " + id
-                        ));
-    }
-
 }

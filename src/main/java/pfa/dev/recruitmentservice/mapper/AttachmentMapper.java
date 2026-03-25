@@ -5,49 +5,24 @@ import pfa.dev.recruitmentservice.dto.AttachmentRequestDTO;
 import pfa.dev.recruitmentservice.dto.AttachmentResponseDTO;
 import pfa.dev.recruitmentservice.entities.Attachment;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AttachmentMapper {
 
+    // ========= ENTITY -> RESPONSE =========
+    @Mapping(source = "candidate.id", target = "candidateId")
+    @Mapping(source = "fileName", target = "fileName")
+    @Mapping(source = "fileType", target = "fileType")
+    @Mapping(source = "category", target = "category")
+    AttachmentResponseDTO toDTO(Attachment attachment);
 
-    // ================= RESPONSE =================
-
-    @Mapping(source = "candidate.id",
-            target = "candidateId")
-    AttachmentResponseDTO toDTO(
-            Attachment attachment
-    );
-
-
-    // ================= CREATE =================
-
+    // ========= REQUEST -> ENTITY =========
     @Mapping(target = "id", ignore = true)
-
-    // candidate sera set dans Service
     @Mapping(target = "candidate", ignore = true)
+    @Mapping(target = "fileData", ignore = true)  // sera rempli dans le service depuis MultipartFile
+    Attachment toEntity(AttachmentRequestDTO dto);
 
-    Attachment toEntity(
-            AttachmentRequestDTO dto
-    );
-
-
-    // ================= UPDATE =================
-
-    @BeanMapping(
-            nullValuePropertyMappingStrategy =
-                    NullValuePropertyMappingStrategy.IGNORE
-    )
-
-    @Mapping(target = "id", ignore = true)
-
-    // IMPORTANT → ne change pas owner attachment
-    @Mapping(target = "candidate", ignore = true)
-
-    void updateEntity(
-
-            AttachmentRequestDTO dto,
-
-            @MappingTarget
-            Attachment attachment
-    );
-
+    // ========= UPDATE =========
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(AttachmentRequestDTO dto, @MappingTarget Attachment attachment);
 }

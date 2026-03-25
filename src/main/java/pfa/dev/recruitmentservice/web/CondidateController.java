@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pfa.dev.recruitmentservice.dto.CandidateRequestDTO;
 import pfa.dev.recruitmentservice.dto.CandidateResponseDTO;
 import pfa.dev.recruitmentservice.service.CandidateService;
@@ -17,7 +18,7 @@ public class CondidateController {
     private final CandidateService candidateService;
 
     @PostMapping("/create")
-    public ResponseEntity<CandidateResponseDTO> createCandidate(CandidateRequestDTO dto){
+    public ResponseEntity<CandidateResponseDTO> createCandidate( @RequestBody CandidateRequestDTO dto){
         return ResponseEntity.ok(candidateService.createCandidate(dto));
     }
 
@@ -42,4 +43,5 @@ public class CondidateController {
         return ResponseEntity.ok().build();
 
     }
+
 }

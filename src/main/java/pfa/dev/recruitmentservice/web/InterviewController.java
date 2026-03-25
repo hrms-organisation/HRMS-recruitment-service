@@ -22,7 +22,7 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.scheduleInterview(dto));
     }
 
-    @PostMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<InterviewResponseDTO> updateInterview(@PathVariable  Long id, InterviewRequestDTO dto){
         return ResponseEntity.ok(interviewService.updateInterview(id, dto));
     }
