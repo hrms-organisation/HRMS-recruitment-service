@@ -1,6 +1,8 @@
 package pfa.dev.recruitmentservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pfa.dev.recruitmentservice.dto.JobOfferRequestDTO;
 import pfa.dev.recruitmentservice.dto.JobOfferResponseDTO;
@@ -9,7 +11,6 @@ import pfa.dev.recruitmentservice.exception.ResourceAlreadyExistException;
 import pfa.dev.recruitmentservice.mapper.JobOfferMapper;
 import pfa.dev.recruitmentservice.repositories.JobOfferRepository;
 
-import java.util.List;
 @Service
 @RequiredArgsConstructor
 
@@ -55,8 +56,8 @@ public class JobOfferServiceImpl implements JobOfferService {
     }
 
     @Override
-    public List<JobOfferResponseDTO> getAllJobOffers() {
-        return List.of();
+    public Page<JobOfferResponseDTO> getAllJobOffers(Pageable pageable) {
+        return jobOfferRepository.findAll(pageable).map(jobOfferMapper::toDTO);
     }
     private JobOffer findJobOfferById(Long id) {
         return jobOfferRepository.findById(id).orElseThrow(() -> new ResourceAlreadyExistException("JobOffer not found"));

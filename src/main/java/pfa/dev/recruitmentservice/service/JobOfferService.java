@@ -1,9 +1,9 @@
 package pfa.dev.recruitmentservice.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import pfa.dev.recruitmentservice.dto.JobOfferRequestDTO;
 import pfa.dev.recruitmentservice.dto.JobOfferResponseDTO;
-
-import java.util.List;
 
 public interface JobOfferService {
 
@@ -15,5 +15,5 @@ public interface JobOfferService {
 
     JobOfferResponseDTO getJobOfferById(Long id);
 
-    List<JobOfferResponseDTO> getAllJobOffers();
+    Page<JobOfferResponseDTO> getAllJobOffers(Pageable pageable);
 }

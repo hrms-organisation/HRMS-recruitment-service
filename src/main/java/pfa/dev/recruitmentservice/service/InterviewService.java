@@ -24,6 +24,8 @@ public interface InterviewService {
     // get single
     InterviewResponseDTO getInterviewById(Long id);
 
+    Page<InterviewResponseDTO> getAllInterviews(Pageable pageable);
+
     // pagination by application
     Page<InterviewResponseDTO>
     getInterviewsByApplication(

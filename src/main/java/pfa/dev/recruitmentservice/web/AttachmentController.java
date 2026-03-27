@@ -39,7 +39,7 @@ public class AttachmentController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('HR')")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
 
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> downloadAttachment(@PathVariable Long id) throws IOException {
@@ -54,13 +54,13 @@ public class AttachmentController {
                 .body(resource);
     }
 
-    @PreAuthorize("hasRole('HR')")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
     @GetMapping("/get/{id}")
     public ResponseEntity<AttachmentResponseDTO> getAttachment(@PathVariable Long id) {
         return ResponseEntity.ok(attachmentService.getAttachmentById(id));
     }
 
-    @PreAuthorize("hasRole('HR')")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
 
     @GetMapping("/candidate/{candidateId}")
     public ResponseEntity<Page<AttachmentResponseDTO>> getAttachmentsByCandidate(
@@ -73,6 +73,7 @@ public class AttachmentController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
     public ResponseEntity<AttachmentResponseDTO> updateAttachment(
             @PathVariable Long id,
             @RequestParam(value = "file", required = false) MultipartFile file,
@@ -86,7 +87,7 @@ public class AttachmentController {
         return ResponseEntity.ok(updated);
     }
 
-    @PreAuthorize("hasRole('HR')")
+    @PreAuthorize("hasAnyRole('HR', 'ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteAttachment(@PathVariable Long id) {
         attachmentService.deleteAttachment(id);

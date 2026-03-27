@@ -16,5 +16,7 @@ public interface ApplicationService {
 
     ApplicationResponseDTO getApplicationById(Long id);
 
+    Page<ApplicationResponseDTO> getAllApplications(Pageable pageable);
+
     Page<ApplicationResponseDTO> getApplicationsByCandidate(Long candidateId, Pageable pageable);
 }

@@ -115,6 +115,11 @@ public class InterviewServiceImpl implements InterviewService {
                 .toDTO(findInterview(id));
     }
 
+    @Override
+    public Page<InterviewResponseDTO> getAllInterviews(Pageable pageable) {
+        return interviewRepository.findAll(pageable).map(interviewMapper::toDTO);
+    }
+
 
     // ================= GET BY APPLICATION =================
 

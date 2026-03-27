@@ -91,7 +91,12 @@ private final JobOfferRepository jobOfferRepository;
 
     @Override
     public ApplicationResponseDTO getApplicationById(Long id) {
-        return null;
+        return applicationMapper.toDTO(findApplication(id));
+    }
+
+    @Override
+    public Page<ApplicationResponseDTO> getAllApplications(Pageable pageable) {
+        return applicationRepository.findAll(pageable).map(applicationMapper::toDTO);
     }
 
     @Override
