@@ -52,6 +52,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
+          context: .
           push: true
           tags: |
             ihab0/recruitment-service:${{ steps.version.outputs.VERSION }}
