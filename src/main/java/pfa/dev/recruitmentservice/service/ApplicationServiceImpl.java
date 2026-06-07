@@ -36,7 +36,7 @@ private final JobOfferRepository jobOfferRepository;
     public ApplicationResponseDTO createApplication(ApplicationRequestDTO dto) {
 
 
-        log.info("Creating applications for candidate {}",
+        log.info("Creating application for candidate {}",
                 dto.getCandidateId());
         Candidate candidate = findCandidate(dto.getCandidateId());
         JobOffer jobOffer = findJobOffer(dto.getJobOfferId());
